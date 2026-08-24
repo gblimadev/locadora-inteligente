@@ -3,7 +3,11 @@ package com.devs.locadora.carros.entities;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.devs.locadora.carros.entities.enums.StatusReserva;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,7 +29,8 @@ public class Reserva {
 
     private BigDecimal valorTotal;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private StatusReserva status;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")
@@ -61,6 +66,14 @@ public class Reserva {
 	public void setDataFim(LocalDate dataFim) {
 		this.dataFim = dataFim;
 	}
+	
+	public StatusReserva getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusReserva status) {
+		this.status = status;
+	}
 
 	public BigDecimal getValorTotal() {
 		return valorTotal;
@@ -68,14 +81,6 @@ public class Reserva {
 
 	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 	public Usuario getUsuario() {

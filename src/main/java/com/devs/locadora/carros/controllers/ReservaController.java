@@ -46,4 +46,24 @@ public class ReservaController {
     public void deleteById(@PathVariable Long id) {
         reservaService.deleteById(id);
     }
+    
+    @PutMapping("/{id}/cancelar")
+    public Reserva cancelar(@PathVariable Long id) {
+        return reservaService.cancelar(id);
+    }
+    
+    @PutMapping("/{id}/confirmar")
+    public Reserva confirmar(@PathVariable Long id) {
+        return reservaService.confirmar(id);
+    }
+    
+    @PutMapping("/{id}/iniciar")
+    public Reserva iniciar(@PathVariable Long id) {
+        return reservaService.iniciar(id);
+    }
+    
+    @PutMapping("/{id}/finalizar")
+    public Reserva finalizar(@PathVariable Long id) {
+        return reservaService.finalizar(id);
+    }
 }

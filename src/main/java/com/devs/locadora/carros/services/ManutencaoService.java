@@ -6,13 +6,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.devs.locadora.carros.entities.Manutencao;
+import com.devs.locadora.carros.repositories.CarroRepository;
 import com.devs.locadora.carros.repositories.ManutencaoRepository;
+import com.devs.locadora.carros.repositories.ReservaRepository;
+import com.devs.locadora.carros.repositories.UsuarioRepository;
 
 @Service
 public class ManutencaoService {
 
-    @Autowired
-    private ManutencaoRepository manutencaoRepository;
+	@Autowired
+	private ReservaRepository reservaRepository;
+
+	@Autowired
+	private UsuarioRepository usuarioRepository;
+
+	@Autowired
+	private CarroRepository carroRepository;
+
+	@Autowired
+	private ManutencaoRepository manutencaoRepository;
+    
 
     public Manutencao insert(Manutencao manutencao) {
         return manutencaoRepository.save(manutencao);
