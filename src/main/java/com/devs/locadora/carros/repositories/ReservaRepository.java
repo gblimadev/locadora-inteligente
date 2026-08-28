@@ -13,7 +13,7 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long>{
 	        LocalDate dataInicio
 	);
 
-	boolean existsByCarroIdAndIdNotAndDataInicioLessThanEqualAndDataFimGreaterThanEqual(
+	boolean existsByCarroIdAndIdNotAndDataInicioLessThanEqualAndDataFimGreaterThanEqual( // existe outra manutenção, para esse carro, que não seja a manutenção que estou editando, e cujo período se sobreponha ao novo período
 			Long carroId, 
 			Long id,
 			LocalDate dataFim,

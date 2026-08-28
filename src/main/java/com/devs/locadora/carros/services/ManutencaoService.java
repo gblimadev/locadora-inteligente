@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.devs.locadora.carros.entities.Carro;
 import com.devs.locadora.carros.entities.Manutencao;
 import com.devs.locadora.carros.repositories.CarroRepository;
 import com.devs.locadora.carros.repositories.ManutencaoRepository;
@@ -25,41 +26,92 @@ public class ManutencaoService {
 
 	@Autowired
 	private ManutencaoRepository manutencaoRepository;
-    
 
-    public Manutencao insert(Manutencao manutencao) {
-        return manutencaoRepository.save(manutencao);
-    }
+	public Manutencao insert(Manutencao manutencao) {
 
-    public List<Manutencao> findAll() {
-        return manutencaoRepository.findAll();
-    }
+		Long carroId = manutencao.getCarro().getId();
 
-    public Manutencao findById(Long id) {
-        return manutencaoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Manutenção não encontrada"));
-    }
+		Carro carro = carroRepository.findById(carroId).orElseThrow(() -> new RuntimeException("Carro não encontrado"));
 
-    public Manutencao update(Long id, Manutencao manutencaoAtualizada) {
+		if (manutencao.getDataInicio().isAfter(manutencao.getDataFim())) {
 
-        Manutencao manutencao = manutencaoRepository.findById(id)
-        		.orElseThrow(() -> new RuntimeException("Manutenção não encontrada"));
+			throw new RuntimeException("A data de início não pode ser posterior à data de fim");
+		}
+		boolean conflitoManutencao = manutencaoRepository
+				.existsByCarroIdAndDataInicioLessThanEqualAndDataFimGreaterThanEqual(carroId, manutencao.getDataFim(),
+						manutencao.getDataInicio());
 
-        manutencao.setDescricao(manutencaoAtualizada.getDescricao());
-        manutencao.setDataInicio(manutencaoAtualizada.getDataInicio());
-        manutencao.setDataFim(manutencaoAtualizada.getDataFim());
-        manutencao.setCusto(manutencaoAtualizada.getCusto());
-        manutencao.setStatus(manutencaoAtualizada.getStatus());
-        manutencao.setCarro(manutencaoAtualizada.getCarro());
+		if (conflitoManutencao) {
 
-        return manutencaoRepository.save(manutencao);
-    }
-    
-    public void deleteById(Long id) {
+			throw new RuntimeException("Carro já possui uma manutenção nesse período");
+		}
 
-        Manutencao manutencao = manutencaoRepository.findById(id)
-        		.orElseThrow(() -> new RuntimeException("Manutenção não encontrada"));;;
+		boolean conflitoReserva = reservaRepository.existsByCarroIdAndDataInicioLessThanEqualAndDataFimGreaterThanEqual(
+				carroId, manutencao.getDataFim(), manutencao.getDataInicio());
 
-        manutencaoRepository.delete(manutencao);
-    }
+		if (conflitoReserva) {
+
+			throw new RuntimeException("Carro possui uma reserva nesse período");
+		}
+
+		manutencao.setCarro(carro);
+
+		return manutencaoRepository.save(manutencao);
+	}
+
+	public List<Manutencao> findAll() {
+		return manutencaoRepository.findAll();
+	}
+
+	public Manutencao findById(Long id) {
+		return manutencaoRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Manutenção não encontrada"));
+	}
+
+	public Manutencao update(Long id, Manutencao manutencaoAtualizada) {
+
+		Manutencao manutencao = manutencaoRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Manutencao não encontrada"));
+
+		Long carroId = manutencaoAtualizada.getCarro().getId();
+
+		Carro carro = carroRepository.findById(carroId)
+				.orElseThrow(() -> new RuntimeException("Carro não encontrado"));
+
+		if (manutencaoAtualizada.getDataInicio().isAfter(manutencaoAtualizada.getDataFim())) {
+			throw new RuntimeException("A data de início não pode ser posterior à data de fim");
+		}
+
+		boolean conflitoManutencao = manutencaoRepository
+				.existsByCarroIdAndIdNotAndDataInicioLessThanEqualAndDataFimGreaterThanEqual(carroId, id,
+						manutencaoAtualizada.getDataFim(), manutencaoAtualizada.getDataInicio());
+
+		if (conflitoManutencao) {
+			throw new RuntimeException("Carro já possui uma manutenção nesse período");
+		}
+
+		boolean conflitoReserva = reservaRepository.existsByCarroIdAndDataInicioLessThanEqualAndDataFimGreaterThanEqual(
+				carroId, manutencaoAtualizada.getDataFim(), manutencaoAtualizada.getDataInicio());
+
+		if (conflitoReserva) {
+
+			throw new RuntimeException("Carro possui uma reserva nesse período");
+		}
+
+		manutencao.setCarro(manutencaoAtualizada.getCarro());
+
+		manutencao.setDataInicio(manutencaoAtualizada.getDataInicio());
+
+		manutencao.setDataFim(manutencaoAtualizada.getDataFim());
+
+		return manutencaoRepository.save(manutencao);
+	}
+
+	public void deleteById(Long id) {
+
+		Manutencao manutencao = manutencaoRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Manutenção não encontrada"));
+		
+		manutencaoRepository.delete(manutencao);
+	}
 }
