@@ -3,13 +3,9 @@ package com.devs.locadora.carros.entities;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import com.devs.locadora.carros.entities.enums.StatusManutencao;
+import com.devs.locadora.carros.entities.enums.TipoManutencao;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "manutencao")
@@ -27,7 +23,11 @@ public class Manutencao {
 
     private BigDecimal custo;
 
-    private String status;
+	@Enumerated(EnumType.STRING)
+    private StatusManutencao status;
+
+	@Enumerated(EnumType.STRING)
+	private TipoManutencao tipoManutencao;
 
     @ManyToOne
     @JoinColumn(name = "carro_id")
@@ -76,12 +76,20 @@ public class Manutencao {
 		this.custo = custo;
 	}
 
-	public String getStatus() {
+	public StatusManutencao getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(StatusManutencao status) {
 		this.status = status;
+	}
+
+	public TipoManutencao getTipoManutencao() {
+		return tipoManutencao;
+	}
+
+	public void setTipoManutencao(TipoManutencao tipoManutencao) {
+		this.tipoManutencao = tipoManutencao;
 	}
 
 	public Carro getCarro() {

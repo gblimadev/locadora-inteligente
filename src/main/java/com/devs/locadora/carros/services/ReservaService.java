@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import com.devs.locadora.carros.dto.ReservaDTO;
+import com.devs.locadora.carros.dto.ReservaResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,55 +34,95 @@ public class ReservaService {
 	@Autowired
 	private ManutencaoRepository manutencaoRepository;
 
-	public Reserva insert(Reserva reserva) {
+	public ReservaResponseDTO insert(ReservaDTO reservaDTO) {
 
-		Long usuarioId = reserva.getUsuario().getId();
-		Long carroId = reserva.getCarro().getId();
-
-		if (reserva.getDataInicio().isAfter(reserva.getDataFim())) {
+		if (reservaDTO.getDataInicio().isAfter(reservaDTO.getDataFim())) {
 			throw new RuntimeException("A data de início não pode ser posterior à data de fim");
 		}
 
+		Usuario usuario = usuarioRepository.findById(reservaDTO.getUsuario_id())
+				.orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+		Carro carro = carroRepository.findById(reservaDTO.getCarro_id())
+				.orElseThrow(() -> new RuntimeException("Carro não encontrado"));
+
 		boolean conflito = reservaRepository.existsByCarroIdAndDataInicioLessThanEqualAndDataFimGreaterThanEqual(
-				carroId, reserva.getDataFim(), reserva.getDataInicio());
+				carro.getId(), reservaDTO.getDataFim(), reservaDTO.getDataInicio());
 
 		if (conflito) {
 			throw new RuntimeException("Carro já possui uma reserva nesse período");
 		}
 
 		boolean manutencao = manutencaoRepository.existsByCarroIdAndDataInicioLessThanEqualAndDataFimGreaterThanEqual(
-				carroId, reserva.getDataFim(), reserva.getDataInicio());
+				carro.getId(), reservaDTO.getDataFim(), reservaDTO.getDataInicio());
 
 		if (manutencao) {
 			throw new RuntimeException("Carro está em manutenção nesse período");
 		}
 
-		Usuario usuario = usuarioRepository.findById(usuarioId)
-				.orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-
-		Carro carro = carroRepository.findById(carroId)
-				.orElseThrow(() -> new RuntimeException("Carro não encontrado"));
-
-		long quantidadeDias = ChronoUnit.DAYS.between(reserva.getDataInicio(), reserva.getDataFim());
+		long quantidadeDias = ChronoUnit.DAYS.between(reservaDTO.getDataInicio(), reservaDTO.getDataFim());
 
 		BigDecimal valorTotal = carro.getPrecoDiaria().multiply(BigDecimal.valueOf(quantidadeDias));
 
+		Reserva reserva = new Reserva();
+		reserva.setDataInicio(reservaDTO.getDataInicio());
+		reserva.setDataFim(reservaDTO.getDataFim());
 		reserva.setValorTotal(valorTotal);
-
 		reserva.setStatus(StatusReserva.PENDENTE);
+		reserva.setUsuario(usuario);
+		reserva.setCarro(carro);
 
-		return reservaRepository.save(reserva);
+		reservaRepository.save(reserva);
+
+		ReservaResponseDTO reservaResponseDTO = new ReservaResponseDTO();
+		reservaResponseDTO.setId(reserva.getId());
+		reservaResponseDTO.setDataInicio(reserva.getDataInicio());
+		reservaResponseDTO.setDataFim(reserva.getDataFim());
+		reservaResponseDTO.setValorTotal(reserva.getValorTotal());
+		reservaResponseDTO.setStatus(reserva.getStatus());
+		reservaResponseDTO.setUsuario_id(reserva.getUsuario().getId());
+		reservaResponseDTO.setCarro_id(reserva.getCarro().getId());
+
+		return reservaResponseDTO;
 	}
 
-	public List<Reserva> findAll() {
-		return reservaRepository.findAll();
+	public List<ReservaResponseDTO> findAll() {
+
+		List<Reserva> reservas = reservaRepository.findAll();
+
+		List<ReservaResponseDTO> reservaResponseDTOs = reservas.stream().map(reserva -> {
+
+			ReservaResponseDTO reservaResponseDTO = new ReservaResponseDTO();
+			reservaResponseDTO.setId(reserva.getId());
+			reservaResponseDTO.setDataInicio(reserva.getDataInicio());
+			reservaResponseDTO.setDataFim(reserva.getDataFim());
+			reservaResponseDTO.setValorTotal(reserva.getValorTotal());
+			reservaResponseDTO.setStatus(reserva.getStatus());
+			reservaResponseDTO.setUsuario_id(reserva.getUsuario().getId());
+			reservaResponseDTO.setCarro_id(reserva.getCarro().getId());
+
+			return reservaResponseDTO;
+		}).toList();
+		return reservaResponseDTOs;
 	}
 
-	public Reserva findById(Long id) {
-		return reservaRepository.findById(id).orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
+	public ReservaResponseDTO findById(Long id) {
+		Reserva reserva = reservaRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
+
+		ReservaResponseDTO reservaResponseDTO = new ReservaResponseDTO();
+		reservaResponseDTO.setId(reserva.getId());
+		reservaResponseDTO.setDataInicio(reserva.getDataInicio());
+		reservaResponseDTO.setDataFim(reserva.getDataFim());
+		reservaResponseDTO.setValorTotal(reserva.getValorTotal());
+		reservaResponseDTO.setStatus(reserva.getStatus());
+		reservaResponseDTO.setUsuario_id(reserva.getUsuario().getId());
+		reservaResponseDTO.setCarro_id(reserva.getCarro().getId());
+
+		return reservaResponseDTO;
 	}
 
-	public Reserva update(Long id, Reserva reservaAtualizada) {
+	public ReservaResponseDTO update(Long id, ReservaDTO reservaAtualizadaDTO) {
 
 		Reserva reserva = reservaRepository.findById(id)
 				.orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
@@ -97,46 +139,48 @@ public class ReservaService {
 			throw new RuntimeException("Não é possível alterar uma reserva em andamento");
 		}
 
-		Long usuarioId = reservaAtualizada.getUsuario().getId();
-		Long carroId = reservaAtualizada.getCarro().getId();
+		Carro carro = reserva.getCarro();
 
-		usuarioRepository.findById(usuarioId)
-				.orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-
-		Carro carro = carroRepository.findById(carroId)
-				.orElseThrow(() -> new RuntimeException("Carro não encontrado"));
-
-		if (reservaAtualizada.getDataInicio().isAfter(reservaAtualizada.getDataFim())) {
+		if (reservaAtualizadaDTO.getDataInicio().isAfter(reservaAtualizadaDTO.getDataFim())) {
 			throw new RuntimeException("A data de início não pode ser posterior à data de fim");
 		}
 
 		boolean conflito = reservaRepository
-				.existsByCarroIdAndIdNotAndDataInicioLessThanEqualAndDataFimGreaterThanEqual(carroId, id,
-						reservaAtualizada.getDataFim(), reservaAtualizada.getDataInicio());
+				.existsByCarroIdAndIdNotAndDataInicioLessThanEqualAndDataFimGreaterThanEqual(carro.getId(), id,
+						reservaAtualizadaDTO.getDataFim(), reservaAtualizadaDTO.getDataInicio());
 
 		if (conflito) {
 			throw new RuntimeException("Carro já possui uma reserva nesse período");
 		}
 
 		boolean manutencao = manutencaoRepository.existsByCarroIdAndDataInicioLessThanEqualAndDataFimGreaterThanEqual(
-				carroId, reservaAtualizada.getDataFim(), reservaAtualizada.getDataInicio());
+				carro.getId(), reservaAtualizadaDTO.getDataFim(), reservaAtualizadaDTO.getDataInicio());
 
 		if (manutencao) {
 			throw new RuntimeException("Carro está em manutenção nesse período");
 		}
 
-		long quantidadeDias = ChronoUnit.DAYS.between(reservaAtualizada.getDataInicio(),
-				reservaAtualizada.getDataFim());
+		long quantidadeDias = ChronoUnit.DAYS.between(reservaAtualizadaDTO.getDataInicio(),
+				reservaAtualizadaDTO.getDataFim());
 
 		BigDecimal valorTotal = carro.getPrecoDiaria().multiply(BigDecimal.valueOf(quantidadeDias));
 
-		reserva.setDataInicio(reservaAtualizada.getDataInicio());
-		reserva.setDataFim(reservaAtualizada.getDataFim());
-		reserva.setUsuario(reservaAtualizada.getUsuario());
-		reserva.setCarro(reservaAtualizada.getCarro());
+		reserva.setDataInicio(reservaAtualizadaDTO.getDataInicio());
+		reserva.setDataFim(reservaAtualizadaDTO.getDataFim());
 		reserva.setValorTotal(valorTotal);
 
-		return reservaRepository.save(reserva);
+		reservaRepository.save(reserva);
+
+		ReservaResponseDTO reservaResponseDTO = new ReservaResponseDTO();
+		reservaResponseDTO.setId(reserva.getId());
+		reservaResponseDTO.setDataInicio(reserva.getDataInicio());
+		reservaResponseDTO.setDataFim(reserva.getDataFim());
+		reservaResponseDTO.setValorTotal(reserva.getValorTotal());
+		reservaResponseDTO.setStatus(reserva.getStatus());
+		reservaResponseDTO.setUsuario_id(reserva.getUsuario().getId());
+		reservaResponseDTO.setCarro_id(reserva.getCarro().getId());
+
+		return reservaResponseDTO;
 	}
 
 	public void deleteById(Long id) {
@@ -147,7 +191,7 @@ public class ReservaService {
 		reservaRepository.delete(reserva);
 	}
 
-	public Reserva cancelar(Long id) {
+	public ReservaResponseDTO cancelar(Long id) {
 
 		Reserva reserva = reservaRepository.findById(id)
 				.orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
@@ -162,10 +206,25 @@ public class ReservaService {
 
 		reserva.setStatus(StatusReserva.CANCELADA);
 
-		return reservaRepository.save(reserva);
+		Carro carro = reserva.getCarro();
+		carro.setDisponivel(true);
+		carroRepository.save(carro);
+
+		reservaRepository.save(reserva);
+
+		ReservaResponseDTO reservaResponseDTO = new ReservaResponseDTO();
+		reservaResponseDTO.setId(reserva.getId());
+		reservaResponseDTO.setDataInicio(reserva.getDataInicio());
+		reservaResponseDTO.setDataFim(reserva.getDataFim());
+		reservaResponseDTO.setValorTotal(reserva.getValorTotal());
+		reservaResponseDTO.setStatus(reserva.getStatus());
+		reservaResponseDTO.setUsuario_id(reserva.getUsuario().getId());
+		reservaResponseDTO.setCarro_id(reserva.getCarro().getId());
+
+		return reservaResponseDTO;
 	}
 
-	public Reserva confirmar(Long id) {
+	public ReservaResponseDTO confirmar(Long id) {
 
 		Reserva reserva = reservaRepository.findById(id)
 				.orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
@@ -176,10 +235,21 @@ public class ReservaService {
 
 		reserva.setStatus(StatusReserva.CONFIRMADA);
 
-		return reservaRepository.save(reserva);
+		reservaRepository.save(reserva);
+
+		ReservaResponseDTO reservaResponseDTO = new ReservaResponseDTO();
+		reservaResponseDTO.setId(reserva.getId());
+		reservaResponseDTO.setDataInicio(reserva.getDataInicio());
+		reservaResponseDTO.setDataFim(reserva.getDataFim());
+		reservaResponseDTO.setValorTotal(reserva.getValorTotal());
+		reservaResponseDTO.setStatus(reserva.getStatus());
+		reservaResponseDTO.setUsuario_id(reserva.getUsuario().getId());
+		reservaResponseDTO.setCarro_id(reserva.getCarro().getId());
+
+		return reservaResponseDTO;
 	}
 
-	public Reserva iniciar(Long id) {
+	public ReservaResponseDTO iniciar(Long id) {
 
 		Reserva reserva = reservaRepository.findById(id)
 				.orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
@@ -192,12 +262,27 @@ public class ReservaService {
 			throw new RuntimeException("A reserva ainda não pode ser iniciada");
 		}
 
+		if (LocalDate.now().isAfter(reserva.getDataFim())) {
+			throw new RuntimeException("O período da reserva já terminou");
+		}
+
 		reserva.setStatus(StatusReserva.EM_ANDAMENTO);
 
-		return reservaRepository.save(reserva);
+		reservaRepository.save(reserva);
+
+		ReservaResponseDTO reservaResponseDTO = new ReservaResponseDTO();
+		reservaResponseDTO.setId(reserva.getId());
+		reservaResponseDTO.setDataInicio(reserva.getDataInicio());
+		reservaResponseDTO.setDataFim(reserva.getDataFim());
+		reservaResponseDTO.setValorTotal(reserva.getValorTotal());
+		reservaResponseDTO.setStatus(reserva.getStatus());
+		reservaResponseDTO.setUsuario_id(reserva.getUsuario().getId());
+		reservaResponseDTO.setCarro_id(reserva.getCarro().getId());
+
+		return reservaResponseDTO;
 	}
 
-	public Reserva finalizar(Long id) {
+	public ReservaResponseDTO finalizar(Long id) {
 
 		Reserva reserva = reservaRepository.findById(id)
 				.orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
@@ -212,6 +297,17 @@ public class ReservaService {
 
 		reserva.setStatus(StatusReserva.FINALIZADA);
 
-		return reservaRepository.save(reserva);
+		reservaRepository.save(reserva);
+
+		ReservaResponseDTO reservaResponseDTO = new ReservaResponseDTO();
+		reservaResponseDTO.setId(reserva.getId());
+		reservaResponseDTO.setDataInicio(reserva.getDataInicio());
+		reservaResponseDTO.setDataFim(reserva.getDataFim());
+		reservaResponseDTO.setValorTotal(reserva.getValorTotal());
+		reservaResponseDTO.setStatus(reserva.getStatus());
+		reservaResponseDTO.setUsuario_id(reserva.getUsuario().getId());
+		reservaResponseDTO.setCarro_id(reserva.getCarro().getId());
+
+		return  reservaResponseDTO;
 	}
 }

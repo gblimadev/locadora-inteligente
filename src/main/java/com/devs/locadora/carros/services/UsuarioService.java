@@ -3,6 +3,8 @@ package com.devs.locadora.carros.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.devs.locadora.carros.dto.UsuarioDTO;
+import com.devs.locadora.carros.dto.UsuarioResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,48 +16,117 @@ public class UsuarioService {
 	
 	@Autowired
 	UsuarioRepository usuarioRepository;
-	
-	public Usuario insert(Usuario usuario) {
-        return usuarioRepository.save(usuario);
+
+    public UsuarioResponseDTO insert(UsuarioDTO usuarioDTO) {
+
+        Usuario usuario = new Usuario();
+
+        usuario.setNome(usuarioDTO.getNome());
+        usuario.setCpf(usuarioDTO.getCpf());
+        usuario.setTelefone(usuarioDTO.getTelefone());
+        usuario.setSenha(usuarioDTO.getSenha());
+        usuario.setNumeroCnh(usuarioDTO.getNumeroCnh());
+        usuario.setDataNascimento(usuarioDTO.getDataNascimento());
+
+        usuarioRepository.save(usuario);
+
+        UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO();
+
+        usuarioResponseDTO.setId(usuario.getId());
+        usuarioResponseDTO.setNome(usuario.getNome());
+        usuarioResponseDTO.setCpf(usuario.getCpf());
+        usuarioResponseDTO.setTelefone(usuario.getTelefone());
+        usuarioResponseDTO.setNumeroCnh(usuario.getNumeroCnh());
+        usuarioResponseDTO.setDataNascimento(usuario.getDataNascimento());
+
+        return usuarioResponseDTO;
     }
 
-    public List<Usuario> findAll() {
-        return usuarioRepository.findAll();
+    public List<UsuarioResponseDTO> findAll() {
+
+        List<Usuario> usuarios = usuarioRepository.findAll();
+
+        List<UsuarioResponseDTO> usuarioResponseDTOs = usuarios.stream().map(usuario -> {
+
+            UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO();
+
+            usuarioResponseDTO.setId(usuario.getId());
+            usuarioResponseDTO.setNome(usuario.getNome());
+            usuarioResponseDTO.setCpf(usuario.getCpf());
+            usuarioResponseDTO.setTelefone(usuario.getTelefone());
+            usuarioResponseDTO.setNumeroCnh(usuario.getNumeroCnh());
+            usuarioResponseDTO.setDataNascimento(usuario.getDataNascimento());
+
+            return usuarioResponseDTO;
+
+        }).toList();
+
+        return usuarioResponseDTOs;
     }
     
-    public Usuario findById(Long id) {
-    	return usuarioRepository.findById(id)
-    			.orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-    }
-    
-    public void deleteById(Long id) {
-    	
+    public UsuarioResponseDTO findById(Long id) {
+
     	Usuario usuario = usuarioRepository.findById(id)
-    			.orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-    	
-    	usuarioRepository.deleteById(usuario.getId());
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO();
+        usuarioResponseDTO.setId(usuario.getId());
+        usuarioResponseDTO.setNome(usuario.getNome());
+        usuarioResponseDTO.setCpf(usuario.getCpf());
+        usuarioResponseDTO.setTelefone(usuario.getTelefone());
+        usuarioResponseDTO.setNumeroCnh(usuario.getNumeroCnh());
+        usuarioResponseDTO.setDataNascimento(usuario.getDataNascimento());
+
+        return usuarioResponseDTO;
+
     }
     
-    public Usuario update(Long id, Usuario usuarioAtualizado) {
+    public void delete(Long id) {
+
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        usuarioRepository.delete(usuario);
+    }
+    
+    public UsuarioResponseDTO update(Long id, UsuarioDTO usuarioAtualizadoDTO) {
 
         Usuario usuario = usuarioRepository.findById(id)
         		.orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        usuario.setNome(usuarioAtualizado.getNome());
-        usuario.setCpf(usuarioAtualizado.getCpf());
-        usuario.setTelefone(usuarioAtualizado.getTelefone());
-        usuario.setSenha(usuarioAtualizado.getSenha());
-        usuario.setNumeroCnh(usuarioAtualizado.getNumeroCnh());
-        usuario.setDataNascimento(usuarioAtualizado.getDataNascimento());
+        usuario.setNome(usuarioAtualizadoDTO.getNome());
+        usuario.setCpf(usuarioAtualizadoDTO.getCpf());
+        usuario.setTelefone(usuarioAtualizadoDTO.getTelefone());
+        usuario.setSenha(usuarioAtualizadoDTO.getSenha());
+        usuario.setNumeroCnh(usuarioAtualizadoDTO.getNumeroCnh());
+        usuario.setDataNascimento(usuarioAtualizadoDTO.getDataNascimento());
 
-        return usuarioRepository.save(usuario);
+        usuarioRepository.save(usuario);
+
+        UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO();
+        usuarioResponseDTO.setId(usuario.getId());
+        usuarioResponseDTO.setNome(usuario.getNome());
+        usuarioResponseDTO.setCpf(usuario.getCpf());
+        usuarioResponseDTO.setTelefone(usuario.getTelefone());
+        usuarioResponseDTO.setNumeroCnh(usuario.getNumeroCnh());
+        usuarioResponseDTO.setDataNascimento(usuario.getDataNascimento());
+
+        return usuarioResponseDTO;
     }
     
-    public Usuario findByCpf(String cpf) {
+    public UsuarioResponseDTO findByCpf(String cpf) {
     	
     	Usuario usuario = usuarioRepository.findByCpf(cpf)
     			.orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO();
+        usuarioResponseDTO.setId(usuario.getId());
+        usuarioResponseDTO.setNome(usuario.getNome());
+        usuarioResponseDTO.setCpf(usuario.getCpf());
+        usuarioResponseDTO.setTelefone(usuario.getTelefone());
+        usuarioResponseDTO.setNumeroCnh(usuario.getNumeroCnh());
+        usuarioResponseDTO.setDataNascimento(usuario.getDataNascimento());
     	
-    	return usuario;
+    	return usuarioResponseDTO;
     }
 }

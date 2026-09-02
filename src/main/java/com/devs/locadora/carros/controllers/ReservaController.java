@@ -2,6 +2,8 @@ package com.devs.locadora.carros.controllers;
 
 import java.util.List;
 
+import com.devs.locadora.carros.dto.ReservaDTO;
+import com.devs.locadora.carros.dto.ReservaResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,23 +25,23 @@ public class ReservaController {
     ReservaService reservaService;
 
     @PostMapping
-    public Reserva insert(@RequestBody Reserva reserva) {
-        return reservaService.insert(reserva);
+    public ReservaResponseDTO insert(@RequestBody ReservaDTO reservaDTO) {
+        return reservaService.insert(reservaDTO);
     }
 
     @GetMapping
-    public List<Reserva> findAll() {
+    public List<ReservaResponseDTO> findAll() {
         return reservaService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Reserva findById(@PathVariable Long id) {
+    public ReservaResponseDTO findById(@PathVariable Long id) {
         return reservaService.findById(id);
     }
 
     @PutMapping("/{id}")
-    public Reserva update(@PathVariable Long id, @RequestBody Reserva reservaAtualizada) {
-        return reservaService.update(id, reservaAtualizada);
+    public ReservaResponseDTO update(@PathVariable Long id, @RequestBody ReservaDTO reservaAtualizadaDTO) {
+        return reservaService.update(id, reservaAtualizadaDTO);
     }
 
     @DeleteMapping("/{id}")
@@ -48,22 +50,22 @@ public class ReservaController {
     }
     
     @PutMapping("/{id}/cancelar")
-    public Reserva cancelar(@PathVariable Long id) {
+    public ReservaResponseDTO cancelar(@PathVariable Long id) {
         return reservaService.cancelar(id);
     }
     
     @PutMapping("/{id}/confirmar")
-    public Reserva confirmar(@PathVariable Long id) {
+    public ReservaResponseDTO confirmar(@PathVariable Long id) {
         return reservaService.confirmar(id);
     }
     
     @PutMapping("/{id}/iniciar")
-    public Reserva iniciar(@PathVariable Long id) {
+    public ReservaResponseDTO iniciar(@PathVariable Long id) {
         return reservaService.iniciar(id);
     }
     
     @PutMapping("/{id}/finalizar")
-    public Reserva finalizar(@PathVariable Long id) {
+    public ReservaResponseDTO finalizar(@PathVariable Long id) {
         return reservaService.finalizar(id);
     }
 }

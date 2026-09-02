@@ -3,6 +3,8 @@ package com.devs.locadora.carros.controllers;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.devs.locadora.carros.dto.CarroDTO;
+import com.devs.locadora.carros.dto.CarroResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,22 +19,22 @@ public class CarroController {
     CarroService carroService;
 
     @PostMapping
-    public Carro insert(@RequestBody Carro carro) {
-        return carroService.insert(carro);
+    public CarroResponseDTO insert(@RequestBody CarroDTO carroDTO) {
+        return carroService.insert(carroDTO);
     }
 
     @GetMapping
-    public List<Carro> findAll() {
+    public List<CarroResponseDTO> findAll() {
         return carroService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Carro findById(@PathVariable Long id) {
+    public CarroResponseDTO findById(@PathVariable Long id) {
         return carroService.findById(id);
     }
 
     @PutMapping("/{id}")
-    public Carro update(@PathVariable Long id, @RequestBody Carro carroAtualizado) {
+    public CarroResponseDTO update(@PathVariable Long id, @RequestBody CarroDTO carroAtualizado) {
         return carroService.update(id, carroAtualizado);
     }
 
@@ -42,7 +44,7 @@ public class CarroController {
     }
 
     @GetMapping("/disponiveis")
-    public List<Carro> findCarrosDisponiveis(@RequestParam LocalDate dataInicio, @RequestParam LocalDate dataFim) {
+    public List<CarroResponseDTO> findCarrosDisponiveis(@RequestParam LocalDate dataInicio, @RequestParam LocalDate dataFim) {
         return carroService.findCarrosDisponiveis(dataInicio, dataFim);
     }
 }

@@ -2,6 +2,8 @@ package com.devs.locadora.carros.controllers;
 
 import java.util.List;
 
+import com.devs.locadora.carros.dto.UsuarioDTO;
+import com.devs.locadora.carros.dto.UsuarioResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,35 +25,32 @@ public class UsuarioController {
 	UsuarioService usuarioService;
 	
 	@PostMapping
-    public Usuario insert(@RequestBody Usuario usuario) {
-        return usuarioService.insert(usuario);
+    public UsuarioResponseDTO insert(@RequestBody UsuarioDTO usuarioDTO) {
+        return usuarioService.insert(usuarioDTO);
     }
 
     @GetMapping
-    public List<Usuario> findAll() {
+    public List<UsuarioResponseDTO> findAll() {
         return usuarioService.findAll();
     }
     
     @GetMapping("/{id}")
-    public Usuario findById(@PathVariable Long id) {
+    public UsuarioResponseDTO findById(@PathVariable Long id) {
         return usuarioService.findById(id);
     }
 
     @PutMapping("/{id}")
-    public Usuario update(@PathVariable Long id, @RequestBody Usuario usuarioAtualizado) {
-    	return usuarioService.update(id, usuarioAtualizado);
+    public UsuarioResponseDTO update(@PathVariable Long id, @RequestBody UsuarioDTO usuarioAtualizadoDTO) {
+    	return usuarioService.update(id, usuarioAtualizadoDTO);
     }
 
     @DeleteMapping("/{id}")
-    public void deletebyId(@PathVariable Long id) {
-    	
-    	Usuario usuario = usuarioService.findById(id);
-    	
-        usuarioService.deleteById(usuario.getId());
+    public void delete(@PathVariable Long id) {
+        usuarioService.delete(id);
     }
 
     @GetMapping("/cpf/{cpf}")
-    public Usuario findByCpf(@PathVariable String cpf) {
+    public UsuarioResponseDTO findByCpf(@PathVariable String cpf) {
         return usuarioService.findByCpf(cpf);
     }
 }
