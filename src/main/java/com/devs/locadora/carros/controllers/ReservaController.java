@@ -4,7 +4,10 @@ import java.util.List;
 
 import com.devs.locadora.carros.dto.ReservaDTO;
 import com.devs.locadora.carros.dto.ReservaResponseDTO;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.devs.locadora.carros.entities.Reserva;
 import com.devs.locadora.carros.services.ReservaService;
 
 @RestController
@@ -25,47 +27,65 @@ public class ReservaController {
     ReservaService reservaService;
 
     @PostMapping
-    public ReservaResponseDTO insert(@RequestBody ReservaDTO reservaDTO) {
-        return reservaService.insert(reservaDTO);
+    public ResponseEntity<ReservaResponseDTO> insert(@Valid @RequestBody ReservaDTO reservaDTO) {
+        ReservaResponseDTO reservaResponseDTO = reservaService.insert(reservaDTO);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(reservaResponseDTO);
     }
 
     @GetMapping
-    public List<ReservaResponseDTO> findAll() {
-        return reservaService.findAll();
+    public ResponseEntity<List<ReservaResponseDTO>> findAll() {
+        List<ReservaResponseDTO> reservaResponseDTOS = reservaService.findAll();
+
+        return ResponseEntity.ok(reservaResponseDTOS);
     }
 
     @GetMapping("/{id}")
-    public ReservaResponseDTO findById(@PathVariable Long id) {
-        return reservaService.findById(id);
+    public ResponseEntity<ReservaResponseDTO> findById(@PathVariable Long id) {
+        ReservaResponseDTO reservaResponseDTO = reservaService.findById(id);
+
+        return ResponseEntity.ok(reservaResponseDTO);
     }
 
     @PutMapping("/{id}")
-    public ReservaResponseDTO update(@PathVariable Long id, @RequestBody ReservaDTO reservaAtualizadaDTO) {
-        return reservaService.update(id, reservaAtualizadaDTO);
+    public ResponseEntity<ReservaResponseDTO> update(@PathVariable Long id,@Valid @RequestBody ReservaDTO reservaAtualizadaDTO) {
+        ReservaResponseDTO reservaResponseDTO = reservaService.update(id, reservaAtualizadaDTO);
+
+        return ResponseEntity.ok(reservaResponseDTO);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         reservaService.deleteById(id);
+
+        return ResponseEntity.noContent().build();
     }
-    
+
     @PutMapping("/{id}/cancelar")
-    public ReservaResponseDTO cancelar(@PathVariable Long id) {
-        return reservaService.cancelar(id);
+    public ResponseEntity<ReservaResponseDTO> cancelar(@PathVariable Long id) {
+        ReservaResponseDTO reservaResponseDTO = reservaService.cancelar(id);
+
+        return ResponseEntity.ok(reservaResponseDTO);
     }
-    
+
     @PutMapping("/{id}/confirmar")
-    public ReservaResponseDTO confirmar(@PathVariable Long id) {
-        return reservaService.confirmar(id);
+    public ResponseEntity<ReservaResponseDTO> confirmar(@PathVariable Long id) {
+        ReservaResponseDTO reservaResponseDTO = reservaService.confirmar(id);
+
+        return ResponseEntity.ok(reservaResponseDTO);
     }
-    
+
     @PutMapping("/{id}/iniciar")
-    public ReservaResponseDTO iniciar(@PathVariable Long id) {
-        return reservaService.iniciar(id);
+    public ResponseEntity<ReservaResponseDTO> iniciar(@PathVariable Long id) {
+        ReservaResponseDTO reservaResponseDTO = reservaService.iniciar(id);
+
+        return ResponseEntity.ok(reservaResponseDTO);
     }
-    
+
     @PutMapping("/{id}/finalizar")
-    public ReservaResponseDTO finalizar(@PathVariable Long id) {
-        return reservaService.finalizar(id);
+    public ResponseEntity<ReservaResponseDTO> finalizar(@PathVariable Long id) {
+        ReservaResponseDTO reservaResponseDTO = reservaService.finalizar(id);
+
+        return ResponseEntity.ok(reservaResponseDTO);
     }
 }

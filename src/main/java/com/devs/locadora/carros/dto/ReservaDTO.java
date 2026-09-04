@@ -3,20 +3,25 @@ package com.devs.locadora.carros.dto;
 import com.devs.locadora.carros.entities.Carro;
 import com.devs.locadora.carros.entities.Usuario;
 import com.devs.locadora.carros.entities.enums.StatusReserva;
+import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class ReservaDTO {
 
+    @NotNull(message = "A data início é obrigatória")
     private LocalDate dataInicio;
 
+    @NotNull(message = "A data fim é obrigatória")
     private LocalDate dataFim;
 
     private BigDecimal valorTotal;
 
+    @NotNull(message = "O usuário é obrigatório")
     private Long usuario_id;
 
+    @NotNull(message = "O carro é obrigatório")
     private Long carro_id;
 
     public LocalDate getDataInicio() {

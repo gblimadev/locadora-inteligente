@@ -1,29 +1,43 @@
 package com.devs.locadora.carros.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.math.BigDecimal;
 
 public class CarroDTO {
 
+    @NotBlank(message = "A marca do carro é obrigatória")
     private String marca;
 
+    @NotBlank(message = "O modelo do carro é obrigatório")
     private String modelo;
 
+    @NotNull(message = "O ano do carro é obrigatório")
     private Integer ano;
 
+    @NotNull(message = "O tipo é obrigatório")
     private String tipo;
 
+    @NotBlank(message = "O tipo do combustível é obrigatório")
     private String combustivel;
 
+    @NotBlank(message = "O tipo do cambio é obrigatório")
     private String cambio;
 
+    @NotBlank(message = "O nível desempenho é obrigatório")
     private String nivelDesempenho;
 
+    @NotBlank(message = "O nível desempenho é obrigatório")
     private String nivelEconomia;
 
+    @NotBlank(message = "O nível conforto é obrigatório")
     private String nivelConforto;
 
+    @NotNull(message = "A quantidade de lugares é obrigatório")
     private Integer lugares;
 
+    @NotNull(message = "O portaMalas é necessário")
     private Integer portaMalas;
 
     private BigDecimal precoDiaria;

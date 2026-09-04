@@ -2,13 +2,14 @@ package com.devs.locadora.carros.controllers;
 
 import java.time.LocalDate;
 import java.util.List;
-
 import com.devs.locadora.carros.dto.CarroDTO;
 import com.devs.locadora.carros.dto.CarroResponseDTO;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.devs.locadora.carros.entities.Carro;
 import com.devs.locadora.carros.services.CarroService;
 
 @RestController
@@ -19,32 +20,47 @@ public class CarroController {
     CarroService carroService;
 
     @PostMapping
-    public CarroResponseDTO insert(@RequestBody CarroDTO carroDTO) {
-        return carroService.insert(carroDTO);
+    public ResponseEntity<CarroResponseDTO> insert(@Valid @RequestBody CarroDTO carroDTO) {
+
+        CarroResponseDTO carroResponseDTO = carroService.insert(carroDTO);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(carroResponseDTO);
     }
 
     @GetMapping
-    public List<CarroResponseDTO> findAll() {
-        return carroService.findAll();
+    public ResponseEntity<List<CarroResponseDTO>> findAll() {
+
+        List<CarroResponseDTO> carroResponseDTO = carroService.findAll();
+
+        return ResponseEntity.ok(carroResponseDTO);
     }
 
     @GetMapping("/{id}")
-    public CarroResponseDTO findById(@PathVariable Long id) {
-        return carroService.findById(id);
+    public ResponseEntity<CarroResponseDTO> findById(@PathVariable Long id) {
+        CarroResponseDTO carroResponseDTO = carroService.findById(id);
+
+        return ResponseEntity.ok(carroResponseDTO);
     }
 
     @PutMapping("/{id}")
-    public CarroResponseDTO update(@PathVariable Long id, @RequestBody CarroDTO carroAtualizado) {
-        return carroService.update(id, carroAtualizado);
+    public ResponseEntity<CarroResponseDTO> update(@PathVariable Long id, @Valid @RequestBody CarroDTO carroAtualizado) {
+        CarroResponseDTO carroResponseDTO = carroService.update(id, carroAtualizado);
+
+        return ResponseEntity.ok(carroResponseDTO);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         carroService.deleteById(id);
+
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/disponiveis")
-    public List<CarroResponseDTO> findCarrosDisponiveis(@RequestParam LocalDate dataInicio, @RequestParam LocalDate dataFim) {
-        return carroService.findCarrosDisponiveis(dataInicio, dataFim);
+    public ResponseEntity<List<CarroResponseDTO>> findCarrosDisponiveis(@RequestParam LocalDate dataInicio, @RequestParam LocalDate dataFim) {
+        List<CarroResponseDTO> carroResponseDTO = carroService.findCarrosDisponiveis(dataInicio, dataFim);
+
+        return ResponseEntity.ok(carroResponseDTO);
     }
 }
+

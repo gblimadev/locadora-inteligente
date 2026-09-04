@@ -4,19 +4,25 @@ import com.devs.locadora.carros.entities.enums.StatusManutencao;
 import com.devs.locadora.carros.entities.enums.TipoManutencao;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
 public class ManutencaoDTO {
 
+    @NotBlank(message = "A descrição é obrigatória")
     private String descricao;
 
+    @NotNull(message = "A data início é obrigatória")
     private LocalDate dataInicio;
 
+    @NotNull(message = "A data fim é obrigatória")
     private LocalDate dataFim;
 
     private TipoManutencao tipoManutencao;
 
+    @NotNull(message = "O carro é obrigatório")
     private Long carro_id;
 
     public String getDescricao() {
