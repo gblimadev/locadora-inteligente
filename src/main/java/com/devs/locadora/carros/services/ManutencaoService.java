@@ -7,6 +7,7 @@ import com.devs.locadora.carros.dto.ManutencaoDTO;
 import com.devs.locadora.carros.dto.ManutencaoReponseDTO;
 import com.devs.locadora.carros.entities.enums.StatusManutencao;
 import com.devs.locadora.carros.entities.enums.TipoManutencao;
+import com.devs.locadora.carros.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +36,7 @@ public class ManutencaoService {
 	public ManutencaoReponseDTO insert(ManutencaoDTO manutencaoDTO) {
 
 		Carro carro = carroRepository.findById(manutencaoDTO.getCarro_id())
-				.orElseThrow(() -> new RuntimeException("Carro não encontrado"));
+				.orElseThrow(() -> new ResourceNotFoundException("Carro não encontrado"));
 
 		if (manutencaoDTO.getDataInicio().isAfter(manutencaoDTO.getDataFim())) {
 			throw new RuntimeException("A data de início não pode ser posterior à data de fim");
@@ -131,7 +132,7 @@ public class ManutencaoService {
 	public ManutencaoReponseDTO findById(Long id) {
 
 		Manutencao manutencao = manutencaoRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Manutenção não encontrada"));
+				.orElseThrow(() -> new ResourceNotFoundException("Manutenção não encontrada"));
 
 		ManutencaoReponseDTO manutencaoReponseDTO = new ManutencaoReponseDTO();
 		manutencaoReponseDTO.setId(manutencao.getId());
@@ -149,7 +150,7 @@ public class ManutencaoService {
 	public ManutencaoReponseDTO update(Long id, ManutencaoDTO manutencaoAtualizadaDTO) {
 
 		Manutencao manutencao = manutencaoRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Manutenção não encontrada"));
+				.orElseThrow(() -> new ResourceNotFoundException("Manutenção não encontrada"));
 
 		Carro carro = manutencao.getCarro();
 
@@ -227,7 +228,7 @@ public class ManutencaoService {
 	public void deleteById(Long id) {
 
 		Manutencao manutencao = manutencaoRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Manutenção não encontrada"));
+				.orElseThrow(() -> new ResourceNotFoundException("Manutenção não encontrada"));
 		
 		manutencaoRepository.delete(manutencao);
 	}
@@ -235,7 +236,7 @@ public class ManutencaoService {
 	public ManutencaoReponseDTO atualizarStatus(Long id, StatusManutencao novoStatus) {
 
 		Manutencao manutencao = manutencaoRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Manutenção não encontrada"));
+				.orElseThrow(() -> new ResourceNotFoundException("Manutenção não encontrada"));
 
 		if (manutencao.getStatus() == StatusManutencao.CONCLUIDA) {
 			throw new RuntimeException("A manutenção já está concluída");

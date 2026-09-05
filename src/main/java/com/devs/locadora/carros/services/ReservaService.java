@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.devs.locadora.carros.dto.ReservaDTO;
 import com.devs.locadora.carros.dto.ReservaResponseDTO;
+import com.devs.locadora.carros.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -186,7 +187,7 @@ public class ReservaService {
 	public void deleteById(Long id) {
 
 		Reserva reserva = reservaRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
+				.orElseThrow(() -> new ResourceNotFoundException("Reserva não encontrada"));
 
 		reservaRepository.delete(reserva);
 	}
@@ -194,7 +195,7 @@ public class ReservaService {
 	public ReservaResponseDTO cancelar(Long id) {
 
 		Reserva reserva = reservaRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
+				.orElseThrow(() -> new ResourceNotFoundException("Reserva não encontrada"));
 
 		if (reserva.getStatus() == StatusReserva.FINALIZADA) {
 			throw new RuntimeException("Não é possível cancelar uma reserva finalizada");
@@ -227,7 +228,7 @@ public class ReservaService {
 	public ReservaResponseDTO confirmar(Long id) {
 
 		Reserva reserva = reservaRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
+				.orElseThrow(() -> new ResourceNotFoundException("Reserva não encontrada"));
 
 		if (reserva.getStatus() != StatusReserva.PENDENTE) {
 			throw new RuntimeException("Somente reservas pendentes podem ser confirmadas");
@@ -252,7 +253,7 @@ public class ReservaService {
 	public ReservaResponseDTO iniciar(Long id) {
 
 		Reserva reserva = reservaRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
+				.orElseThrow(() -> new ResourceNotFoundException("Reserva não encontrada"));
 
 		if (reserva.getStatus() != StatusReserva.CONFIRMADA) {
 			throw new RuntimeException("Somente reservas confirmadas podem ser iniciadas");
@@ -285,7 +286,7 @@ public class ReservaService {
 	public ReservaResponseDTO finalizar(Long id) {
 
 		Reserva reserva = reservaRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
+				.orElseThrow(() -> new ResourceNotFoundException("Reserva não encontrada"));
 
 		if (reserva.getStatus() != StatusReserva.EM_ANDAMENTO) {
 			throw new RuntimeException("Somente reservas em andamento podem ser finalizadas");

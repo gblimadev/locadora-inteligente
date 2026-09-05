@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.devs.locadora.carros.dto.CarroDTO;
 import com.devs.locadora.carros.dto.CarroResponseDTO;
+import com.devs.locadora.carros.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -86,7 +87,7 @@ public class CarroService {
 
     public CarroResponseDTO findById(Long id) {
         Carro carro = carroRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Carro não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Carro não encontrado"));
 
         CarroResponseDTO carroResponseDTO = new CarroResponseDTO();
         carroResponseDTO.setId(carro.getId());
@@ -110,7 +111,7 @@ public class CarroService {
     public CarroResponseDTO update(Long id, CarroDTO carroAtualizadoDTO) {
 
         Carro carro = carroRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Carro não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Carro não encontrado"));
 
         carro.setMarca(carroAtualizadoDTO.getMarca());
         carro.setModelo(carroAtualizadoDTO.getModelo());
@@ -150,7 +151,7 @@ public class CarroService {
     public void deleteById(Long id) {
 
         Carro carro = carroRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Carro não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Carro não encontrado"));
 
         carroRepository.delete(carro);
     }

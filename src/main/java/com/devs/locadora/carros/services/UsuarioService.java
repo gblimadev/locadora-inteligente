@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.devs.locadora.carros.dto.UsuarioDTO;
 import com.devs.locadora.carros.dto.UsuarioResponseDTO;
+import com.devs.locadora.carros.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -67,7 +68,7 @@ public class UsuarioService {
     public UsuarioResponseDTO findById(Long id) {
 
     	Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
         UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO();
         usuarioResponseDTO.setId(usuario.getId());
@@ -84,7 +85,7 @@ public class UsuarioService {
     public void delete(Long id) {
 
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
         usuarioRepository.delete(usuario);
     }
@@ -92,7 +93,7 @@ public class UsuarioService {
     public UsuarioResponseDTO update(Long id, UsuarioDTO usuarioAtualizadoDTO) {
 
         Usuario usuario = usuarioRepository.findById(id)
-        		.orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        		.orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
         usuario.setNome(usuarioAtualizadoDTO.getNome());
         usuario.setCpf(usuarioAtualizadoDTO.getCpf());
@@ -117,7 +118,7 @@ public class UsuarioService {
     public UsuarioResponseDTO findByCpf(String cpf) {
     	
     	Usuario usuario = usuarioRepository.findByCpf(cpf)
-    			.orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+    			.orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
         UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO();
         usuarioResponseDTO.setId(usuario.getId());
