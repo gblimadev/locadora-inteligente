@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.devs.locadora.carros.dto.ReservaDTO;
 import com.devs.locadora.carros.dto.ReservaResponseDTO;
+import com.devs.locadora.carros.exceptions.BusinessException;
 import com.devs.locadora.carros.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,27 +39,27 @@ public class ReservaService {
 	public ReservaResponseDTO insert(ReservaDTO reservaDTO) {
 
 		if (reservaDTO.getDataInicio().isAfter(reservaDTO.getDataFim())) {
-			throw new RuntimeException("A data de início não pode ser posterior à data de fim");
+			throw new BusinessException("A data de início não pode ser posterior à data de fim");
 		}
 
 		Usuario usuario = usuarioRepository.findById(reservaDTO.getUsuario_id())
-				.orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+				.orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
 		Carro carro = carroRepository.findById(reservaDTO.getCarro_id())
-				.orElseThrow(() -> new RuntimeException("Carro não encontrado"));
+				.orElseThrow(() -> new ResourceNotFoundException("Carro não encontrado"));
 
 		boolean conflito = reservaRepository.existsByCarroIdAndDataInicioLessThanEqualAndDataFimGreaterThanEqual(
 				carro.getId(), reservaDTO.getDataFim(), reservaDTO.getDataInicio());
 
 		if (conflito) {
-			throw new RuntimeException("Carro já possui uma reserva nesse período");
+			throw new BusinessException("Carro já possui uma reserva nesse período");
 		}
 
 		boolean manutencao = manutencaoRepository.existsByCarroIdAndDataInicioLessThanEqualAndDataFimGreaterThanEqual(
 				carro.getId(), reservaDTO.getDataFim(), reservaDTO.getDataInicio());
 
 		if (manutencao) {
-			throw new RuntimeException("Carro está em manutenção nesse período");
+			throw new BusinessException("Carro está em manutenção nesse período");
 		}
 
 		long quantidadeDias = ChronoUnit.DAYS.between(reservaDTO.getDataInicio(), reservaDTO.getDataFim());
@@ -109,7 +110,7 @@ public class ReservaService {
 
 	public ReservaResponseDTO findById(Long id) {
 		Reserva reserva = reservaRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
+				.orElseThrow(() -> new ResourceNotFoundException("Reserva não encontrada"));
 
 		ReservaResponseDTO reservaResponseDTO = new ReservaResponseDTO();
 		reservaResponseDTO.setId(reserva.getId());
@@ -126,24 +127,24 @@ public class ReservaService {
 	public ReservaResponseDTO update(Long id, ReservaDTO reservaAtualizadaDTO) {
 
 		Reserva reserva = reservaRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
+				.orElseThrow(() -> new ResourceNotFoundException("Reserva não encontrada"));
 
 		if (reserva.getStatus() == StatusReserva.CANCELADA) {
-			throw new RuntimeException("Não é possível alterar uma reserva cancelada");
+			throw new BusinessException("Não é possível alterar uma reserva cancelada");
 		}
 
 		if (reserva.getStatus() == StatusReserva.FINALIZADA) {
-			throw new RuntimeException("Não é possível alterar uma reserva finalizada");
+			throw new BusinessException("Não é possível alterar uma reserva finalizada");
 		}
 
 		if (reserva.getStatus() == StatusReserva.EM_ANDAMENTO) {
-			throw new RuntimeException("Não é possível alterar uma reserva em andamento");
+			throw new BusinessException("Não é possível alterar uma reserva em andamento");
 		}
 
 		Carro carro = reserva.getCarro();
 
 		if (reservaAtualizadaDTO.getDataInicio().isAfter(reservaAtualizadaDTO.getDataFim())) {
-			throw new RuntimeException("A data de início não pode ser posterior à data de fim");
+			throw new BusinessException("A data de início não pode ser posterior à data de fim");
 		}
 
 		boolean conflito = reservaRepository
@@ -151,14 +152,14 @@ public class ReservaService {
 						reservaAtualizadaDTO.getDataFim(), reservaAtualizadaDTO.getDataInicio());
 
 		if (conflito) {
-			throw new RuntimeException("Carro já possui uma reserva nesse período");
+			throw new BusinessException("Carro já possui uma reserva nesse período");
 		}
 
 		boolean manutencao = manutencaoRepository.existsByCarroIdAndDataInicioLessThanEqualAndDataFimGreaterThanEqual(
 				carro.getId(), reservaAtualizadaDTO.getDataFim(), reservaAtualizadaDTO.getDataInicio());
 
 		if (manutencao) {
-			throw new RuntimeException("Carro está em manutenção nesse período");
+			throw new BusinessException("Carro está em manutenção nesse período");
 		}
 
 		long quantidadeDias = ChronoUnit.DAYS.between(reservaAtualizadaDTO.getDataInicio(),
@@ -198,11 +199,11 @@ public class ReservaService {
 				.orElseThrow(() -> new ResourceNotFoundException("Reserva não encontrada"));
 
 		if (reserva.getStatus() == StatusReserva.FINALIZADA) {
-			throw new RuntimeException("Não é possível cancelar uma reserva finalizada");
+			throw new BusinessException("Não é possível cancelar uma reserva finalizada");
 		}
 
 		if (reserva.getStatus() == StatusReserva.CANCELADA) {
-			throw new RuntimeException("A reserva já está cancelada");
+			throw new BusinessException("A reserva já está cancelada");
 		}
 
 		reserva.setStatus(StatusReserva.CANCELADA);
@@ -231,7 +232,7 @@ public class ReservaService {
 				.orElseThrow(() -> new ResourceNotFoundException("Reserva não encontrada"));
 
 		if (reserva.getStatus() != StatusReserva.PENDENTE) {
-			throw new RuntimeException("Somente reservas pendentes podem ser confirmadas");
+			throw new BusinessException("Somente reservas pendentes podem ser confirmadas");
 		}
 
 		reserva.setStatus(StatusReserva.CONFIRMADA);
@@ -256,15 +257,15 @@ public class ReservaService {
 				.orElseThrow(() -> new ResourceNotFoundException("Reserva não encontrada"));
 
 		if (reserva.getStatus() != StatusReserva.CONFIRMADA) {
-			throw new RuntimeException("Somente reservas confirmadas podem ser iniciadas");
+			throw new BusinessException("Somente reservas confirmadas podem ser iniciadas");
 		}
 
 		if (LocalDate.now().isBefore(reserva.getDataInicio())) {
-			throw new RuntimeException("A reserva ainda não pode ser iniciada");
+			throw new BusinessException("A reserva ainda não pode ser iniciada");
 		}
 
 		if (LocalDate.now().isAfter(reserva.getDataFim())) {
-			throw new RuntimeException("O período da reserva já terminou");
+			throw new BusinessException("O período da reserva já terminou");
 		}
 
 		reserva.setStatus(StatusReserva.EM_ANDAMENTO);
@@ -289,11 +290,11 @@ public class ReservaService {
 				.orElseThrow(() -> new ResourceNotFoundException("Reserva não encontrada"));
 
 		if (reserva.getStatus() != StatusReserva.EM_ANDAMENTO) {
-			throw new RuntimeException("Somente reservas em andamento podem ser finalizadas");
+			throw new BusinessException("Somente reservas em andamento podem ser finalizadas");
 		}
 
 		if (LocalDate.now().isBefore(reserva.getDataFim())) {
-			throw new RuntimeException("A reserva ainda não pode ser finalizada");
+			throw new BusinessException("A reserva ainda não pode ser finalizada");
 		}
 
 		reserva.setStatus(StatusReserva.FINALIZADA);

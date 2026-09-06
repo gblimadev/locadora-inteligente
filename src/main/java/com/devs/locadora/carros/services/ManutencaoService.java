@@ -7,6 +7,7 @@ import com.devs.locadora.carros.dto.ManutencaoDTO;
 import com.devs.locadora.carros.dto.ManutencaoReponseDTO;
 import com.devs.locadora.carros.entities.enums.StatusManutencao;
 import com.devs.locadora.carros.entities.enums.TipoManutencao;
+import com.devs.locadora.carros.exceptions.BusinessException;
 import com.devs.locadora.carros.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class ManutencaoService {
 				.orElseThrow(() -> new ResourceNotFoundException("Carro não encontrado"));
 
 		if (manutencaoDTO.getDataInicio().isAfter(manutencaoDTO.getDataFim())) {
-			throw new RuntimeException("A data de início não pode ser posterior à data de fim");
+			throw new BusinessException("A data de início não pode ser posterior à data de fim");
 		}
 
 		boolean conflitoManutencao = manutencaoRepository
@@ -47,14 +48,14 @@ public class ManutencaoService {
 						manutencaoDTO.getDataInicio());
 
 		if (conflitoManutencao) {
-			throw new RuntimeException("Carro já possui uma manutenção nesse período");
+			throw new BusinessException("Carro já possui uma manutenção nesse período");
 		}
 
 		boolean conflitoReserva = reservaRepository.existsByCarroIdAndDataInicioLessThanEqualAndDataFimGreaterThanEqual(
 				carro.getId(), manutencaoDTO.getDataFim(), manutencaoDTO.getDataInicio());
 
 		if (conflitoReserva) {
-			throw new RuntimeException("Carro possui uma reserva nesse período");
+			throw new BusinessException("Carro possui uma reserva nesse período");
 		}
 
 		Manutencao manutencao = new Manutencao();
@@ -155,11 +156,11 @@ public class ManutencaoService {
 		Carro carro = manutencao.getCarro();
 
 		if (manutencao.getStatus() == StatusManutencao.CONCLUIDA) {
-			throw new RuntimeException("Não é possível alterar uma manutenção concluída");
+			throw new BusinessException("Não é possível alterar uma manutenção concluída");
 		}
 
 		if (manutencaoAtualizadaDTO.getDataInicio().isAfter(manutencaoAtualizadaDTO.getDataFim())) {
-			throw new RuntimeException("A data de início não pode ser posterior à data de fim");
+			throw new BusinessException("A data de início não pode ser posterior à data de fim");
 		}
 
 		boolean conflitoManutencao = manutencaoRepository
@@ -167,14 +168,14 @@ public class ManutencaoService {
 						manutencaoAtualizadaDTO.getDataFim(), manutencaoAtualizadaDTO.getDataInicio());
 
 		if (conflitoManutencao) {
-			throw new RuntimeException("Carro já possui uma manutenção nesse período");
+			throw new BusinessException("Carro já possui uma manutenção nesse período");
 		}
 
 		boolean conflitoReserva = reservaRepository.existsByCarroIdAndDataInicioLessThanEqualAndDataFimGreaterThanEqual(
 				carro.getId(), manutencaoAtualizadaDTO.getDataFim(), manutencaoAtualizadaDTO.getDataInicio());
 
 		if (conflitoReserva) {
-			throw new RuntimeException("Carro possui uma reserva nesse período");
+			throw new BusinessException("Carro possui uma reserva nesse período");
 		}
 
 		manutencao.setDescricao(manutencaoAtualizadaDTO.getDescricao());
@@ -239,12 +240,12 @@ public class ManutencaoService {
 				.orElseThrow(() -> new ResourceNotFoundException("Manutenção não encontrada"));
 
 		if (manutencao.getStatus() == StatusManutencao.CONCLUIDA) {
-			throw new RuntimeException("A manutenção já está concluída");
+			throw new BusinessException("A manutenção já está concluída");
 		}
 
 		if (manutencao.getStatus() == StatusManutencao.PENDENTE
 				&& novoStatus == StatusManutencao.CONCLUIDA) {
-			throw new RuntimeException(
+			throw new BusinessException(
 					"Não é possível concluir uma manutenção pendente");
 		}
 

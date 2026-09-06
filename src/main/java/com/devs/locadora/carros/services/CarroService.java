@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.devs.locadora.carros.dto.CarroDTO;
 import com.devs.locadora.carros.dto.CarroResponseDTO;
+import com.devs.locadora.carros.exceptions.BusinessException;
 import com.devs.locadora.carros.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -159,7 +160,7 @@ public class CarroService {
     public List<CarroResponseDTO> findCarrosDisponiveis(LocalDate dataInicio, LocalDate dataFim) {
 
         if (dataInicio.isAfter(dataFim)) {
-            throw new RuntimeException("A data início não pode ser posterior a data fim");
+            throw new BusinessException("A data início não pode ser posterior a data fim");
         }
 
         List<Carro> carros = carroRepository.findCarrosDisponiveis(dataInicio, dataFim);

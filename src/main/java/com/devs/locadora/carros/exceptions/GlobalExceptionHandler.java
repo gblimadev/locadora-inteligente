@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler extends RuntimeException {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<String> resourceNotFound(ResourceNotFoundException e) {
@@ -22,4 +22,11 @@ public class GlobalExceptionHandler extends RuntimeException {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<String> businessError(BusinessException e) {
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
 }
