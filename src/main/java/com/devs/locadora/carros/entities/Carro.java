@@ -39,7 +39,7 @@ public class Carro {
 	private Integer portaMalas;
 
 	private BigDecimal precoDiaria;
-
+	
 	private Boolean disponivel;
 
 	public Carro() {
@@ -156,7 +156,5 @@ public class Carro {
 	public void setDisponivel(Boolean disponivel) {
 		this.disponivel = disponivel;
 	}
-	
-	
-	
+
 }
