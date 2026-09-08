@@ -2,11 +2,14 @@ package com.devs.locadora.carros.controllers;
 
 import java.util.List;
 
+import com.devs.locadora.carros.dto.ErrorResponseDTO;
 import com.devs.locadora.carros.dto.UsuarioDTO;
 import com.devs.locadora.carros.dto.UsuarioResponseDTO;
 import com.devs.locadora.carros.services.UsuarioService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -35,14 +38,25 @@ public class UsuarioController {
             description = "Cadastra um novo usuário"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Usuário cadastrado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos")
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Usuário cadastrado com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Dados inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @PostMapping
     public ResponseEntity<UsuarioResponseDTO> insert(
             @Valid @RequestBody UsuarioDTO usuarioDTO) {
 
-        UsuarioResponseDTO usuarioResponseDTO = usuarioService.insert(usuarioDTO);
+        UsuarioResponseDTO usuarioResponseDTO =
+                usuarioService.insert(usuarioDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioResponseDTO);
     }
@@ -58,7 +72,8 @@ public class UsuarioController {
     @GetMapping
     public ResponseEntity<List<UsuarioResponseDTO>> findAll() {
 
-        List<UsuarioResponseDTO> usuarioResponseDTO = usuarioService.findAll();
+        List<UsuarioResponseDTO> usuarioResponseDTO =
+                usuarioService.findAll();
 
         return ResponseEntity.ok(usuarioResponseDTO);
     }
@@ -68,14 +83,25 @@ public class UsuarioController {
             description = "Retorna os dados de um usuário específico"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Usuário encontrado"),
-            @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Usuário encontrado"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Usuário não encontrado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> findById(
             @PathVariable Long id) {
 
-        UsuarioResponseDTO usuarioResponseDTO = usuarioService.findById(id);
+        UsuarioResponseDTO usuarioResponseDTO =
+                usuarioService.findById(id);
 
         return ResponseEntity.ok(usuarioResponseDTO);
     }
@@ -85,9 +111,26 @@ public class UsuarioController {
             description = "Atualiza os dados de um usuário existente"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Usuário atualizado com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Dados inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Usuário não encontrado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> update(
@@ -105,8 +148,18 @@ public class UsuarioController {
             description = "Remove um usuário pelo seu ID"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Usuário excluído com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Usuário excluído com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Usuário não encontrado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
@@ -122,14 +175,25 @@ public class UsuarioController {
             description = "Retorna os dados de um usuário através do CPF"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Usuário encontrado"),
-            @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Usuário encontrado"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Usuário não encontrado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @GetMapping("/cpf/{cpf}")
     public ResponseEntity<UsuarioResponseDTO> findByCpf(
             @PathVariable String cpf) {
 
-        UsuarioResponseDTO usuarioResponseDTO = usuarioService.findByCpf(cpf);
+        UsuarioResponseDTO usuarioResponseDTO =
+                usuarioService.findByCpf(cpf);
 
         return ResponseEntity.ok(usuarioResponseDTO);
     }

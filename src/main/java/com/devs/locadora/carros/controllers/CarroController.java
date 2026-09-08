@@ -5,9 +5,12 @@ import java.util.List;
 
 import com.devs.locadora.carros.dto.CarroDTO;
 import com.devs.locadora.carros.dto.CarroResponseDTO;
+import com.devs.locadora.carros.dto.ErrorResponseDTO;
 import com.devs.locadora.carros.services.CarroService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -29,8 +32,18 @@ public class CarroController {
             description = "Cadastra um novo carro na locadora"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Carro cadastrado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos")
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Carro cadastrado com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Dados inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @PostMapping
     public ResponseEntity<CarroResponseDTO> insert(@Valid @RequestBody CarroDTO carroDTO) {
@@ -61,8 +74,18 @@ public class CarroController {
             description = "Retorna os dados de um carro específico"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Carro encontrado"),
-            @ApiResponse(responseCode = "404", description = "Carro não encontrado")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Carro encontrado"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Carro não encontrado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @GetMapping("/{id}")
     public ResponseEntity<CarroResponseDTO> findById(@PathVariable Long id) {
@@ -77,14 +100,34 @@ public class CarroController {
             description = "Atualiza os dados de um carro existente"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Carro atualizado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "404", description = "Carro não encontrado")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Carro atualizado com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Dados inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Carro não encontrado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @PutMapping("/{id}")
-    public ResponseEntity<CarroResponseDTO> update(@PathVariable Long id, @Valid @RequestBody CarroDTO carroAtualizado) {
+    public ResponseEntity<CarroResponseDTO> update(
+            @PathVariable Long id,
+            @Valid @RequestBody CarroDTO carroAtualizado) {
 
-        CarroResponseDTO carroResponseDTO = carroService.update(id, carroAtualizado);
+        CarroResponseDTO carroResponseDTO =
+                carroService.update(id, carroAtualizado);
 
         return ResponseEntity.ok(carroResponseDTO);
     }
@@ -94,8 +137,18 @@ public class CarroController {
             description = "Remove um carro pelo seu ID"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Carro excluído com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Carro não encontrado")
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Carro excluído com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Carro não encontrado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
@@ -114,7 +167,9 @@ public class CarroController {
             description = "Carros disponíveis encontrados com sucesso"
     )
     @GetMapping("/disponiveis")
-    public ResponseEntity<List<CarroResponseDTO>> findCarrosDisponiveis(@RequestParam LocalDate dataInicio, @RequestParam LocalDate dataFim) {
+    public ResponseEntity<List<CarroResponseDTO>> findCarrosDisponiveis(
+            @RequestParam LocalDate dataInicio,
+            @RequestParam LocalDate dataFim) {
 
         List<CarroResponseDTO> carroResponseDTO =
                 carroService.findCarrosDisponiveis(dataInicio, dataFim);

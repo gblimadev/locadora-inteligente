@@ -2,11 +2,14 @@ package com.devs.locadora.carros.controllers;
 
 import java.util.List;
 
+import com.devs.locadora.carros.dto.ErrorResponseDTO;
 import com.devs.locadora.carros.dto.ReservaDTO;
 import com.devs.locadora.carros.dto.ReservaResponseDTO;
 import com.devs.locadora.carros.services.ReservaService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -35,14 +38,33 @@ public class ReservaController {
             description = "Cadastra uma nova reserva para um usuário e um carro"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Reserva cadastrada com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos ou regra de negócio violada"),
-            @ApiResponse(responseCode = "404", description = "Usuário ou carro não encontrado")
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Reserva cadastrada com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Dados inválidos ou regra de negócio violada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Usuário ou carro não encontrado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @PostMapping
-    public ResponseEntity<ReservaResponseDTO> insert(@Valid @RequestBody ReservaDTO reservaDTO) {
+    public ResponseEntity<ReservaResponseDTO> insert(
+            @Valid @RequestBody ReservaDTO reservaDTO) {
 
-        ReservaResponseDTO reservaResponseDTO = reservaService.insert(reservaDTO);
+        ReservaResponseDTO reservaResponseDTO =
+                reservaService.insert(reservaDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(reservaResponseDTO);
     }
@@ -58,7 +80,8 @@ public class ReservaController {
     @GetMapping
     public ResponseEntity<List<ReservaResponseDTO>> findAll() {
 
-        List<ReservaResponseDTO> reservaResponseDTOS = reservaService.findAll();
+        List<ReservaResponseDTO> reservaResponseDTOS =
+                reservaService.findAll();
 
         return ResponseEntity.ok(reservaResponseDTOS);
     }
@@ -68,13 +91,25 @@ public class ReservaController {
             description = "Retorna os dados de uma reserva específica"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Reserva encontrada"),
-            @ApiResponse(responseCode = "404", description = "Reserva não encontrada")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Reserva encontrada"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Reserva não encontrada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @GetMapping("/{id}")
-    public ResponseEntity<ReservaResponseDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<ReservaResponseDTO> findById(
+            @PathVariable Long id) {
 
-        ReservaResponseDTO reservaResponseDTO = reservaService.findById(id);
+        ReservaResponseDTO reservaResponseDTO =
+                reservaService.findById(id);
 
         return ResponseEntity.ok(reservaResponseDTO);
     }
@@ -84,12 +119,31 @@ public class ReservaController {
             description = "Atualiza os dados de uma reserva existente"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Reserva atualizada com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos ou regra de negócio violada"),
-            @ApiResponse(responseCode = "404", description = "Reserva, usuário ou carro não encontrado")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Reserva atualizada com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Dados inválidos ou regra de negócio violada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Reserva, usuário ou carro não encontrado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ReservaResponseDTO> update(@PathVariable Long id, @Valid @RequestBody ReservaDTO reservaAtualizadaDTO) {
+    public ResponseEntity<ReservaResponseDTO> update(
+            @PathVariable Long id,
+            @Valid @RequestBody ReservaDTO reservaAtualizadaDTO) {
 
         ReservaResponseDTO reservaResponseDTO =
                 reservaService.update(id, reservaAtualizadaDTO);
@@ -102,12 +156,30 @@ public class ReservaController {
             description = "Remove uma reserva pelo seu ID"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Reserva excluída com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Reserva não encontrada"),
-            @ApiResponse(responseCode = "400", description = "Regra de negócio impede a exclusão")
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Reserva excluída com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Reserva não encontrada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Regra de negócio impede a exclusão",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteById(
+            @PathVariable Long id) {
 
         reservaService.deleteById(id);
 
@@ -119,14 +191,33 @@ public class ReservaController {
             description = "Cancela uma reserva e libera o carro para novas reservas"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Reserva cancelada com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Reserva não pode ser cancelada"),
-            @ApiResponse(responseCode = "404", description = "Reserva não encontrada")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Reserva cancelada com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Reserva não pode ser cancelada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Reserva não encontrada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @PutMapping("/{id}/cancelar")
-    public ResponseEntity<ReservaResponseDTO> cancelar(@PathVariable Long id) {
+    public ResponseEntity<ReservaResponseDTO> cancelar(
+            @PathVariable Long id) {
 
-        ReservaResponseDTO reservaResponseDTO = reservaService.cancelar(id);
+        ReservaResponseDTO reservaResponseDTO =
+                reservaService.cancelar(id);
 
         return ResponseEntity.ok(reservaResponseDTO);
     }
@@ -136,14 +227,33 @@ public class ReservaController {
             description = "Confirma uma reserva"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Reserva confirmada com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Reserva não pode ser confirmada"),
-            @ApiResponse(responseCode = "404", description = "Reserva não encontrada")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Reserva confirmada com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Reserva não pode ser confirmada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Reserva não encontrada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @PutMapping("/{id}/confirmar")
-    public ResponseEntity<ReservaResponseDTO> confirmar(@PathVariable Long id) {
+    public ResponseEntity<ReservaResponseDTO> confirmar(
+            @PathVariable Long id) {
 
-        ReservaResponseDTO reservaResponseDTO = reservaService.confirmar(id);
+        ReservaResponseDTO reservaResponseDTO =
+                reservaService.confirmar(id);
 
         return ResponseEntity.ok(reservaResponseDTO);
     }
@@ -153,14 +263,33 @@ public class ReservaController {
             description = "Inicia uma reserva confirmada"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Reserva iniciada com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Reserva não pode ser iniciada"),
-            @ApiResponse(responseCode = "404", description = "Reserva não encontrada")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Reserva iniciada com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Reserva não pode ser iniciada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Reserva não encontrada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @PutMapping("/{id}/iniciar")
-    public ResponseEntity<ReservaResponseDTO> iniciar(@PathVariable Long id) {
+    public ResponseEntity<ReservaResponseDTO> iniciar(
+            @PathVariable Long id) {
 
-        ReservaResponseDTO reservaResponseDTO = reservaService.iniciar(id);
+        ReservaResponseDTO reservaResponseDTO =
+                reservaService.iniciar(id);
 
         return ResponseEntity.ok(reservaResponseDTO);
     }
@@ -170,14 +299,33 @@ public class ReservaController {
             description = "Finaliza uma reserva em andamento"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Reserva finalizada com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Reserva não pode ser finalizada"),
-            @ApiResponse(responseCode = "404", description = "Reserva não encontrada")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Reserva finalizada com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Reserva não pode ser finalizada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Reserva não encontrada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @PutMapping("/{id}/finalizar")
-    public ResponseEntity<ReservaResponseDTO> finalizar(@PathVariable Long id) {
+    public ResponseEntity<ReservaResponseDTO> finalizar(
+            @PathVariable Long id) {
 
-        ReservaResponseDTO reservaResponseDTO = reservaService.finalizar(id);
+        ReservaResponseDTO reservaResponseDTO =
+                reservaService.finalizar(id);
 
         return ResponseEntity.ok(reservaResponseDTO);
     }

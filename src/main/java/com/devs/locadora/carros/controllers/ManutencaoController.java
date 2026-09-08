@@ -2,12 +2,15 @@ package com.devs.locadora.carros.controllers;
 
 import java.util.List;
 
+import com.devs.locadora.carros.dto.ErrorResponseDTO;
 import com.devs.locadora.carros.dto.ManutencaoDTO;
 import com.devs.locadora.carros.dto.ManutencaoReponseDTO;
 import com.devs.locadora.carros.entities.enums.StatusManutencao;
 import com.devs.locadora.carros.services.ManutencaoService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -29,8 +32,18 @@ public class ManutencaoController {
             description = "Cadastra uma nova manutenção para um carro"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Manutenção cadastrada com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos")
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Manutenção cadastrada com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Dados inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @PostMapping
     public ResponseEntity<ManutencaoReponseDTO> insert(
@@ -64,8 +77,18 @@ public class ManutencaoController {
             description = "Retorna os dados de uma manutenção específica"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Manutenção encontrada"),
-            @ApiResponse(responseCode = "404", description = "Manutenção não encontrada")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Manutenção encontrada"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Manutenção não encontrada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @GetMapping("/{id}")
     public ResponseEntity<ManutencaoReponseDTO> findById(@PathVariable Long id) {
@@ -81,9 +104,26 @@ public class ManutencaoController {
             description = "Atualiza os dados de uma manutenção existente"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Manutenção atualizada com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "404", description = "Manutenção não encontrada")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Manutenção atualizada com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Dados inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Manutenção não encontrada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @PutMapping("/{id}")
     public ResponseEntity<ManutencaoReponseDTO> update(
@@ -101,8 +141,18 @@ public class ManutencaoController {
             description = "Remove uma manutenção pelo seu ID"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Manutenção excluída com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Manutenção não encontrada")
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Manutenção excluída com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Manutenção não encontrada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
@@ -117,9 +167,26 @@ public class ManutencaoController {
             description = "Atualiza o status de uma manutenção"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Status atualizado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Status inválido"),
-            @ApiResponse(responseCode = "404", description = "Manutenção não encontrada")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Status atualizado com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Status inválido",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Manutenção não encontrada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
     })
     @PutMapping("/{id}/status")
     public ResponseEntity<ManutencaoReponseDTO> atualizarStatus(
