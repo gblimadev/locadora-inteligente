@@ -1,30 +1,60 @@
 package com.devs.locadora.carros.dto;
 
-import com.devs.locadora.carros.entities.Carro;
 import com.devs.locadora.carros.entities.enums.StatusManutencao;
 import com.devs.locadora.carros.entities.enums.TipoManutencao;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class ManutencaoReponseDTO {
 
+    @Schema(
+            description = "Identificador único da manutenção",
+            example = "1"
+    )
     private Long id;
 
+    @Schema(
+            description = "Descrição da manutenção realizada no carro",
+            example = "Troca de óleo e filtros"
+    )
     private String descricao;
 
+    @Schema(
+            description = "Data de início da manutenção",
+            example = "2026-09-10"
+    )
     private LocalDate dataInicio;
 
+    @Schema(
+            description = "Data de término da manutenção",
+            example = "2026-09-12"
+    )
     private LocalDate dataFim;
 
+    @Schema(
+            description = "Custo total da manutenção",
+            example = "350.00"
+    )
     private BigDecimal custo;
 
+    @Schema(
+            description = "Status atual da manutenção",
+            example = "EM_ANDAMENTO"
+    )
     private StatusManutencao status;
 
+    @Schema(
+            description = "Tipo da manutenção realizada",
+            example = "PREVENTIVA"
+    )
     private TipoManutencao tipoManutencao;
 
+    @Schema(
+            description = "ID do carro relacionado à manutenção",
+            example = "1"
+    )
     private Long carro_id;
 
     public Long getId() {

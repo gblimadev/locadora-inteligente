@@ -2,11 +2,32 @@ package com.devs.locadora.carros.dto;
 
 import java.time.LocalDateTime;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class ErrorResponseDTO {
 
+    @Schema(
+            description = "Data e hora em que o erro ocorreu",
+            example = "2026-09-08T02:30:00"
+    )
     private LocalDateTime timestamp;
+
+    @Schema(
+            description = "Código HTTP do erro",
+            example = "404"
+    )
     private Integer status;
+
+    @Schema(
+            description = "Descrição do tipo do erro HTTP",
+            example = "Not Found"
+    )
     private String error;
+
+    @Schema(
+            description = "Mensagem detalhada explicando o motivo do erro",
+            example = "Carro não encontrado"
+    )
     private String message;
 
     public ErrorResponseDTO() {

@@ -2,34 +2,92 @@ package com.devs.locadora.carros.dto;
 
 import java.math.BigDecimal;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class CarroResponseDTO {
 
+    @Schema(
+            description = "Identificador único do carro",
+            example = "1"
+    )
     private Long id;
 
+    @Schema(
+            description = "Marca do carro",
+            example = "Toyota"
+    )
     private String marca;
 
+    @Schema(
+            description = "Modelo do carro",
+            example = "Corolla"
+    )
     private String modelo;
 
+    @Schema(
+            description = "Ano de fabricação do carro",
+            example = "2026"
+    )
     private Integer ano;
 
+    @Schema(
+            description = "Tipo do carro",
+            example = "Sedan"
+    )
     private String tipo;
 
+    @Schema(
+            description = "Tipo de combustível utilizado pelo carro",
+            example = "Flex"
+    )
     private String combustivel;
 
+    @Schema(
+            description = "Tipo de câmbio do carro",
+            example = "Automático"
+    )
     private String cambio;
 
+    @Schema(
+            description = "Nível de desempenho do carro",
+            example = "Alto"
+    )
     private String nivelDesempenho;
 
+    @Schema(
+            description = "Nível de economia do carro",
+            example = "Médio"
+    )
     private String nivelEconomia;
 
+    @Schema(
+            description = "Nível de conforto do carro",
+            example = "Alto"
+    )
     private String nivelConforto;
 
+    @Schema(
+            description = "Quantidade de lugares disponíveis no carro",
+            example = "5"
+    )
     private Integer lugares;
 
+    @Schema(
+            description = "Capacidade do porta-malas em litros",
+            example = "470"
+    )
     private Integer portaMalas;
 
+    @Schema(
+            description = "Preço da diária do carro",
+            example = "250.00"
+    )
     private BigDecimal precoDiaria;
 
+    @Schema(
+            description = "Indica se o carro está disponível para locação",
+            example = "true"
+    )
     private Boolean disponivel;
 
     public Long getId() {
