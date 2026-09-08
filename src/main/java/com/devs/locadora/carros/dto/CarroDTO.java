@@ -1,47 +1,61 @@
 package com.devs.locadora.carros.dto;
 
+import java.math.BigDecimal;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.math.BigDecimal;
-
 public class CarroDTO {
 
+    @Schema(description = "Marca do carro", example = "Toyota")
     @NotBlank(message = "A marca do carro é obrigatória")
     private String marca;
 
+    @Schema(description = "Modelo do carro", example = "Corolla")
     @NotBlank(message = "O modelo do carro é obrigatório")
     private String modelo;
 
+    @Schema(description = "Ano de fabricação do carro", example = "2026")
     @NotNull(message = "O ano do carro é obrigatório")
     private Integer ano;
 
-    @NotNull(message = "O tipo é obrigatório")
+    @Schema(description = "Tipo do carro", example = "Sedan")
+    @NotBlank(message = "O tipo é obrigatório")
     private String tipo;
 
-    @NotBlank(message = "O tipo do combustível é obrigatório")
+    @Schema(description = "Tipo de combustível utilizado pelo carro", example = "Flex")
+    @NotBlank(message = "O tipo de combustível é obrigatório")
     private String combustivel;
 
-    @NotBlank(message = "O tipo do cambio é obrigatório")
+    @Schema(description = "Tipo de câmbio do carro", example = "Automático")
+    @NotBlank(message = "O tipo de câmbio é obrigatório")
     private String cambio;
 
-    @NotBlank(message = "O nível desempenho é obrigatório")
+    @Schema(description = "Nível de desempenho do carro", example = "Alto")
+    @NotBlank(message = "O nível de desempenho é obrigatório")
     private String nivelDesempenho;
 
-    @NotBlank(message = "O nível desempenho é obrigatório")
+    @Schema(description = "Nível de economia do carro", example = "Médio")
+    @NotBlank(message = "O nível de economia é obrigatório")
     private String nivelEconomia;
 
-    @NotBlank(message = "O nível conforto é obrigatório")
+    @Schema(description = "Nível de conforto do carro", example = "Alto")
+    @NotBlank(message = "O nível de conforto é obrigatório")
     private String nivelConforto;
 
-    @NotNull(message = "A quantidade de lugares é obrigatório")
+    @Schema(description = "Quantidade de lugares disponíveis no carro", example = "5")
+    @NotNull(message = "A quantidade de lugares é obrigatória")
     private Integer lugares;
 
-    @NotNull(message = "O portaMalas é necessário")
+    @Schema(description = "Capacidade do porta-malas em litros", example = "470")
+    @NotNull(message = "O porta-malas é necessário")
     private Integer portaMalas;
 
+    @Schema(description = "Preço da diária do carro", example = "250.00")
     private BigDecimal precoDiaria;
 
+    @Schema(description = "Indica se o carro está disponível para locação", example = "true")
     private Boolean disponivel;
 
     public String getMarca() {

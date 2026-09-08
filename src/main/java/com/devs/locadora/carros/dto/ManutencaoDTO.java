@@ -1,27 +1,46 @@
 package com.devs.locadora.carros.dto;
 
-import com.devs.locadora.carros.entities.enums.StatusManutencao;
+import java.time.LocalDate;
+
 import com.devs.locadora.carros.entities.enums.TipoManutencao;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDate;
-
 public class ManutencaoDTO {
 
+    @Schema(
+            description = "Descrição da manutenção realizada no carro",
+            example = "Troca de óleo e filtros"
+    )
     @NotBlank(message = "A descrição é obrigatória")
     private String descricao;
 
+    @Schema(
+            description = "Data de início da manutenção",
+            example = "2026-09-10"
+    )
     @NotNull(message = "A data início é obrigatória")
     private LocalDate dataInicio;
 
+    @Schema(
+            description = "Data de término da manutenção",
+            example = "2026-09-12"
+    )
     @NotNull(message = "A data fim é obrigatória")
     private LocalDate dataFim;
 
+    @Schema(
+            description = "Tipo da manutenção",
+            example = "PREVENTIVA"
+    )
     private TipoManutencao tipoManutencao;
 
+    @Schema(
+            description = "ID do carro que será submetido à manutenção",
+            example = "1"
+    )
     @NotNull(message = "O carro é obrigatório")
     private Long carro_id;
 

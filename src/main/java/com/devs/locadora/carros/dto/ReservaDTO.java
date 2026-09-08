@@ -1,26 +1,45 @@
 package com.devs.locadora.carros.dto;
 
-import com.devs.locadora.carros.entities.Carro;
-import com.devs.locadora.carros.entities.Usuario;
-import com.devs.locadora.carros.entities.enums.StatusReserva;
-import jakarta.validation.constraints.NotNull;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+
 public class ReservaDTO {
 
+    @Schema(
+            description = "Data de início da reserva",
+            example = "2026-09-15"
+    )
     @NotNull(message = "A data início é obrigatória")
     private LocalDate dataInicio;
 
+    @Schema(
+            description = "Data de término da reserva",
+            example = "2026-09-20"
+    )
     @NotNull(message = "A data fim é obrigatória")
     private LocalDate dataFim;
 
+    @Schema(
+            description = "Valor total da reserva, calculado automaticamente com base no período e no preço da diária",
+            example = "1250.00",
+            accessMode = Schema.AccessMode.READ_ONLY
+    )
     private BigDecimal valorTotal;
 
+    @Schema(
+            description = "ID do usuário responsável pela reserva",
+            example = "1"
+    )
     @NotNull(message = "O usuário é obrigatório")
     private Long usuario_id;
 
+    @Schema(
+            description = "ID do carro que será reservado",
+            example = "1"
+    )
     @NotNull(message = "O carro é obrigatório")
     private Long carro_id;
 
