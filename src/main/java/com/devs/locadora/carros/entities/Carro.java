@@ -39,7 +39,7 @@ public class Carro {
 	private Integer portaMalas;
 
 	private BigDecimal precoDiaria;
-	
+
 	private Boolean disponivel;
 
 	public Carro() {
