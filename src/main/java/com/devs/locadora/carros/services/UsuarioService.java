@@ -7,6 +7,7 @@ import com.devs.locadora.carros.dto.UsuarioDTO;
 import com.devs.locadora.carros.dto.UsuarioResponseDTO;
 import com.devs.locadora.carros.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.devs.locadora.carros.entities.Usuario;
@@ -18,6 +19,9 @@ public class UsuarioService {
 	@Autowired
 	UsuarioRepository usuarioRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     public UsuarioResponseDTO insert(UsuarioDTO usuarioDTO) {
 
         Usuario usuario = new Usuario();
@@ -25,7 +29,7 @@ public class UsuarioService {
         usuario.setNome(usuarioDTO.getNome());
         usuario.setCpf(usuarioDTO.getCpf());
         usuario.setTelefone(usuarioDTO.getTelefone());
-        usuario.setSenha(usuarioDTO.getSenha());
+        usuario.setSenha(passwordEncoder.encode(usuarioDTO.getSenha()));
         usuario.setNumeroCnh(usuarioDTO.getNumeroCnh());
         usuario.setDataNascimento(usuarioDTO.getDataNascimento());
 
